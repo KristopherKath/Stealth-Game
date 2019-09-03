@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "FPSLaunchPad.generated.h"
 
+class UBoxComponent;
+class UStaticMeshComponent;
+class UArrowComponent;
+
 UCLASS()
 class FPSGAME_API AFPSLaunchPad : public AActor
 {
@@ -16,11 +20,34 @@ public:
 	AFPSLaunchPad();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
+	//Static mesh for visual component
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* MeshComp;
+
+	//Box component for collisions
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UBoxComponent* OverlapComp;
+
+	//Function for launching object when in overlap component
+	UFUNCTION()
+		void OverlapLaunchPad(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/* Total impulse added to the character on overlap
+		 Marked 'EditInstanceOnly' to allow in-level editing of this property per instance. */
+	UPROPERTY(EditInstanceOnly, Category = "LaunchPad")
+		float LaunchStrength;
+
+	/* Angle added on top of actor rotation to launch the character.
+		 Marked 'EditInstanceOnly' to allow in-level editing of this property per instance. */
+	UPROPERTY(EditInstanceOnly, Category = "LaunchPad")
+		float LaunchPitchAngle;
+
+	/* Effect to play when activating launch pad */
+	UPROPERTY(EditInstanceOnly, Category = "LaunchPad")
+		UParticleSystem* ActivateLaunchPadEffect;
+
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };
