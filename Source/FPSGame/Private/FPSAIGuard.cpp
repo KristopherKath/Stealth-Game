@@ -4,6 +4,7 @@
 #include "FPSAIGuard.h"
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
+#include "TimerManager.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -21,9 +22,11 @@ AFPSAIGuard::AFPSAIGuard()
 void AFPSAIGuard::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	OriginalRotation = GetActorRotation();
 }
 
+/* Method for when Guard sees Player */
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 {
 	if (SeenPawn == nullptr) { return; }
@@ -31,9 +34,33 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);
 }
 
+/* Edit Guard direction based on noise heard */
 void AFPSAIGuard::OnPawnHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
+	//Debug
 	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Green, false, 10.0f);
+
+	//get direction to look at
+	FVector Direction = Location - GetActorLocation();
+	Direction.Normalize();
+
+	//Make Guard look at new direction without changing Z axis
+	FRotator NewLookAt = FRotationMatrix::MakeFromX(Direction).Rotator();
+	NewLookAt.Pitch = 0.0f;
+	NewLookAt.Roll = 0.0f;
+	SetActorRotation(NewLookAt);
+
+	//Timer for how long to look before looking back at original dir
+		//Reset timer if one was already made
+	GetWorldTimerManager().ClearTimer(TimerHandle_ResetOrientation);
+		//Make new timer
+	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f);
+}
+
+/* Method for reseting Guard orientation */
+void AFPSAIGuard::ResetOrientation()
+{
+	SetActorRotation(OriginalRotation);
 }
 
 // Called every frame
