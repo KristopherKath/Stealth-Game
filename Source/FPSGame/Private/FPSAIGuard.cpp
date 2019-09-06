@@ -17,7 +17,10 @@ AFPSAIGuard::AFPSAIGuard()
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AFPSAIGuard::OnPawnSeen);
 	PawnSensingComp->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnPawnHeard);
+
+	GuardState = EAIState::Idle;
 }
+
 
 // Called when the game starts or when spawned
 void AFPSAIGuard::BeginPlay()
@@ -26,6 +29,7 @@ void AFPSAIGuard::BeginPlay()
 
 	OriginalRotation = GetActorRotation();
 }
+
 
 /* Method for when Guard sees Player */
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
@@ -39,11 +43,18 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	{
 		GM->CompleteMission(SeenPawn, false);
 	}
+
+	SetGuardState(EAIState::Alerted);
 }
+
 
 /* Edit Guard direction based on noise heard */
 void AFPSAIGuard::OnPawnHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
+	//If Guard state is alerted we dont need noises
+	if (GuardState == EAIState::Alerted) { return; }
+	SetGuardState(EAIState::Suspicious);
+	
 	//Debug
 	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Green, false, 10.0f);
 
@@ -64,11 +75,29 @@ void AFPSAIGuard::OnPawnHeard(APawn* NoiseInstigator, const FVector& Location, f
 	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f);
 }
 
+
 /* Method for reseting Guard orientation */
 void AFPSAIGuard::ResetOrientation()
 {
+	if (GuardState == EAIState::Alerted) { return; }
+	SetGuardState(EAIState::Idle);
+
 	SetActorRotation(OriginalRotation);
 }
+
+
+/* Sets the Guard State */
+void AFPSAIGuard::SetGuardState(EAIState NewState)
+{
+	//If already set to this state then don't set
+	if (GuardState == NewState) { return; }
+
+	//Set state
+	GuardState = NewState;
+
+	OnStateChanged(GuardState);
+}
+
 
 // Called every frame
 void AFPSAIGuard::Tick(float DeltaTime)
