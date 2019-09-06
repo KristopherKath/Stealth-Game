@@ -16,9 +16,10 @@ AFPSGameMode::AFPSGameMode()
 	HUDClass = AFPSHUD::StaticClass();
 }
 
-void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
+void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn) {
+		//Disables Player Input
 		InstigatorPawn->DisableInput(nullptr);
 
 		if (SpectatingViewpointClass)
@@ -31,7 +32,7 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
 			{
 				AActor* NewViewTarget = ReturnedActors[0];
 
-				APlayerController* PC = Cast <APlayerController>(InstigatorPawn->GetController());
+				APlayerController* PC = Cast<APlayerController>(InstigatorPawn->GetController());
 				if (PC) {
 					PC->SetViewTargetWithBlend(NewViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
 				}
@@ -43,7 +44,5 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
 		}
 	}
 
-	OnMissionCompleted(InstigatorPawn);
-
-	
+	OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 }
