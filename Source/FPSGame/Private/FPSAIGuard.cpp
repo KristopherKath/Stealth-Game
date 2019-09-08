@@ -6,6 +6,8 @@
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
 #include "FPSGameMode.h"
+#include "AIController.h"
+#include "Classes/Blueprint/AIBlueprintHelperLibrary.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -28,6 +30,11 @@ void AFPSAIGuard::BeginPlay()
 	Super::BeginPlay();
 
 	OriginalRotation = GetActorRotation();
+
+	if (bPatrol)
+	{
+		MoveToNextPatrolPoint();
+	}
 }
 
 
@@ -45,6 +52,13 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	}
 
 	SetGuardState(EAIState::Alerted);
+
+	//Stop Movement if Patroling
+	AController* Controller = GetController();
+	if (Controller)
+	{
+		Controller->StopMovement();
+	}
 }
 
 
@@ -73,6 +87,13 @@ void AFPSAIGuard::OnPawnHeard(APawn* NoiseInstigator, const FVector& Location, f
 	GetWorldTimerManager().ClearTimer(TimerHandle_ResetOrientation);
 		//Make new timer
 	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f);
+
+	//Stop Movement if Patroling
+	AController* Controller = GetController();
+	if (Controller)
+	{
+		Controller->StopMovement();
+	}
 }
 
 
@@ -83,6 +104,11 @@ void AFPSAIGuard::ResetOrientation()
 	SetGuardState(EAIState::Idle);
 
 	SetActorRotation(OriginalRotation);
+
+	if (bPatrol)
+	{
+		MoveToNextPatrolPoint();
+	}
 }
 
 
@@ -99,11 +125,36 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 }
 
 
+void AFPSAIGuard::MoveToNextPatrolPoint()
+{
+	//Assign next patrol point
+	if (CurrentPatrolPoint == nullptr || CurrentPatrolPoint == SecondPatrolPoint) {
+		CurrentPatrolPoint = FirstPatrolPoint;
+	}
+	else {
+		CurrentPatrolPoint = SecondPatrolPoint;
+	}
+
+	UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), CurrentPatrolPoint);
+}
+
+
 // Called every frame
 void AFPSAIGuard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CurrentPatrolPoint)
+	{
+		FVector Delta = GetActorLocation() - CurrentPatrolPoint->GetActorLocation();
+		float DistanceToGoal = Delta.Size();
+
+		//Check if we are within 50 units of goal, if so pick new point
+		if (DistanceToGoal < 70)
+		{
+			MoveToNextPatrolPoint();
+		}
+	}
 }
 
 
