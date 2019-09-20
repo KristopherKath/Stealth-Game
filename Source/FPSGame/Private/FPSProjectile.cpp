@@ -29,6 +29,10 @@ AFPSProjectile::AFPSProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+	//Lets projectile to be seen across all clients
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 
@@ -40,7 +44,14 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
 
-	MakeNoise(1.0f, Instigator);
+	//only Server tells clients what they can do
+	//this has client only simulate what server tells it to 
+	if (Role == ROLE_Authority)
+	{
+		MakeNoise(1.0f, Instigator);
 
-	Destroy();
+		Destroy();
+	}
+
+
 }

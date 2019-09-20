@@ -60,6 +60,10 @@ protected:
 	/** Fires a projectile. */
 	void Fire();
 
+	//Server Function, Reliable means it will reach server (at least eventually)
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
+
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
 
