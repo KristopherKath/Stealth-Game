@@ -54,9 +54,11 @@ void AFPSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If not controlled by a non-network controller
 	if (!IsLocallyControlled())
 	{
 		FRotator NewRot = CameraComponent->RelativeRotation;
+		//RemoteViewPitch is compressed so we need to do the inverse
 		NewRot.Pitch = RemoteViewPitch * 360.0f / 255.0f;
 
 		CameraComponent->SetRelativeRotation(NewRot);
