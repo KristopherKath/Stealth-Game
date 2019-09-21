@@ -8,6 +8,7 @@
 #include "FPSGameMode.h"
 #include "AIController.h"
 #include "Classes/Blueprint/AIBlueprintHelperLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -112,6 +113,11 @@ void AFPSAIGuard::ResetOrientation()
 }
 
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	OnStateChanged(GuardState);
+}
+
 /* Sets the Guard State */
 void AFPSAIGuard::SetGuardState(EAIState NewState)
 {
@@ -120,8 +126,7 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 
 	//Set state
 	GuardState = NewState;
-
-	OnStateChanged(GuardState);
+	OnRep_GuardState();
 }
 
 
@@ -155,6 +160,14 @@ void AFPSAIGuard::Tick(float DeltaTime)
 			MoveToNextPatrolPoint();
 		}
 	}
+}
+
+//This replicated to all clients
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
 }
 
 
