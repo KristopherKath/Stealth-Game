@@ -112,7 +112,7 @@ void AFPSAIGuard::ResetOrientation()
 	}
 }
 
-
+//Sets guard state for clients
 void AFPSAIGuard::OnRep_GuardState()
 {
 	OnStateChanged(GuardState);
@@ -124,7 +124,7 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 	//If already set to this state then don't set
 	if (GuardState == NewState) { return; }
 
-	//Set state
+	//Set state for server & client(s)
 	GuardState = NewState;
 	OnRep_GuardState();
 }
@@ -162,7 +162,7 @@ void AFPSAIGuard::Tick(float DeltaTime)
 	}
 }
 
-//This replicated to all clients
+//This replicates to all clients
 void AFPSAIGuard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

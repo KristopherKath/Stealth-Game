@@ -31,6 +31,7 @@ AFPSProjectile::AFPSProjectile()
 	InitialLifeSpan = 3.0f;
 
 	//Lets projectile to be seen across all clients
+	//Server sends packets to clients
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }
@@ -46,6 +47,7 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 
 	//only Server tells clients what they can do
 	//this has client only simulate what server tells it to 
+	//Clients don't own these, only server should haver permision to do this
 	if (Role == ROLE_Authority)
 	{
 		MakeNoise(1.0f, Instigator);

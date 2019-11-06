@@ -12,6 +12,7 @@ void AFPSGameState::MulticastOnMissionComplete_Implementation(APawn* InstigatorP
 		AFPSPlayerController* PC = Cast<AFPSPlayerController>(It->Get());
 		if (PC && PC->IsLocalController())
 		{
+			//Displays mission complete. Implemented in Blueprint
 			PC->OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 
 			//Disable input

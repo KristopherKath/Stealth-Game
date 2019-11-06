@@ -55,10 +55,14 @@ void AFPSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//If not controlled by a non-network controller
+	//If it is a client (i.e. not the server client) then set rotation
 	if (!IsLocallyControlled())
 	{
+		//Rotates the CameraComponent on the player
+
 		FRotator NewRot = CameraComponent->RelativeRotation;
+		//RemoteViewPitch is already replicated and allows for checking 
+		//	where the clients are looking
 		//RemoteViewPitch is compressed so we need to do the inverse
 		NewRot.Pitch = RemoteViewPitch * 360.0f / 255.0f;
 
@@ -70,6 +74,7 @@ void AFPSCharacter::Tick(float DeltaTime)
 void AFPSCharacter::Fire()
 {
 	// try and fire a projectile
+	// this sends a request to the server to fire
 	ServerFire();
 	
 	// try and play the sound if specified
@@ -90,7 +95,7 @@ void AFPSCharacter::Fire()
 	}
 }
 
-
+//Function allows for clients to send packets to server for being seen
 void AFPSCharacter::ServerFire_Implementation()
 {
 	if (ProjectileClass)
@@ -132,7 +137,7 @@ void AFPSCharacter::MoveRight(float Value)
 	}
 }
 
-
+//Replicates carrying objective to all clients
 void AFPSCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

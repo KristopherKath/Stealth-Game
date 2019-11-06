@@ -23,6 +23,7 @@ AFPSObjectiveActor::AFPSObjectiveActor()
 	SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
+	//Server can update clients with SetReplicates
 	SetReplicates(true);
 }
 
@@ -48,6 +49,7 @@ void AFPSObjectiveActor::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	PlayEffects();
 
+	//Only server should check for destroy
 	if (Role == ROLE_Authority)
 	{
 		AFPSCharacter* MyCharacter = Cast<AFPSCharacter>(OtherActor);

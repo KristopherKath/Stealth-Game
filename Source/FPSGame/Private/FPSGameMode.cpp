@@ -17,6 +17,7 @@ AFPSGameMode::AFPSGameMode()
 	// use our custom HUD class
 	HUDClass = AFPSHUD::StaticClass();
 
+	//Sets current gamemodes game state
 	GameStateClass = AFPSGameState::StaticClass();
 }
 
@@ -33,7 +34,8 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 			if (ReturnedActors.Num() > 0)
 			{
 				AActor* NewViewTarget = ReturnedActors[0];
-
+				
+				//For loop for setting the camera transition for game complete for all clients and server
 				for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
 				{
 					APlayerController* PC = It->Get();
@@ -50,6 +52,7 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 		}
 	}
 
+	//Sets new game state then checks if we should disable input and show mission complete
 	AFPSGameState* GS = GetGameState<AFPSGameState>();
 	if (GS)
 	{

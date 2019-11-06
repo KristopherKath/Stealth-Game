@@ -16,6 +16,7 @@ class FPSGAME_API AFPSPlayerController : public APlayerController
 	
 public:
 
+	//This is implemented in BluePrint
 	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerController")
 	void OnMissionCompleted(APawn* InstigatorPawn, bool bMissionSuccess);
 };
