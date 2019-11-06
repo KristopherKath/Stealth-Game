@@ -13,3 +13,7 @@ WindowsNoEditor
 *.suo
 *.xcodeproj
 *.xcworkspace
+StealthGamePackage/Manifest_NonUFSFiles_Win64.txt
+StealthGamePackage/FPSGame.exe
+StealthGamePackage/FPSGame/Content/Paks/FPSGame-WindowsNoEditor.pak
+StealthGamePackage/Engine/Extras/Redist/en-us/UE4PrereqSetup_x64.exe
