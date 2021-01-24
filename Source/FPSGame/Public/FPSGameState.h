@@ -6,6 +6,10 @@
 #include "GameFramework/GameStateBase.h"
 #include "FPSGameState.generated.h"
 
+//This is a companion class to Gamemode
+//Helps disable all clients when game is over
+	//Cannot be implemented in Gamemode since that class only
+	//exists in the server and no client can run the complete misson procedure
 UCLASS()
 class FPSGAME_API AFPSGameState : public AGameStateBase
 {
