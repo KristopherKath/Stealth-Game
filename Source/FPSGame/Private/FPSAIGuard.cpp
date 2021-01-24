@@ -112,7 +112,7 @@ void AFPSAIGuard::ResetOrientation()
 	}
 }
 
-//Sets guard state for clients
+//Sets guard state for clients 
 void AFPSAIGuard::OnRep_GuardState()
 {
 	OnStateChanged(GuardState);
@@ -162,7 +162,7 @@ void AFPSAIGuard::Tick(float DeltaTime)
 	}
 }
 
-//This replicates to all clients
+//This replicates to all clients - So when variable changes all clients will recieve information
 void AFPSAIGuard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

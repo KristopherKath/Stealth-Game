@@ -33,6 +33,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComp;
 
@@ -42,6 +43,8 @@ protected:
 	UFUNCTION()
 	void OnPawnHeard(APawn* NoiseInstigator, const FVector& Location, float Volume);
 
+
+
 	FRotator OriginalRotation;
 
 	FTimerHandle TimerHandle_ResetOrientation;
@@ -49,17 +52,20 @@ protected:
 	UFUNCTION()
 	void ResetOrientation();
 
+
+
 	UPROPERTY(ReplicatedUsing=OnRep_GuardState)
 	EAIState GuardState;
 
 	UFUNCTION()
 	void OnRep_GuardState();
 
-
 	void SetGuardState(EAIState NewState);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
 	void OnStateChanged(EAIState NewState);
+
+
 
 	/* Let the guard patrol */
 	UPROPERTY(EditInstanceOnly, Category = "AI")
@@ -67,9 +73,9 @@ protected:
 
 	/* Patrol Points */
 	UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
-		AActor* FirstPatrolPoint;
+	AActor* FirstPatrolPoint;
 	UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
-		AActor* SecondPatrolPoint;
+	AActor* SecondPatrolPoint;
 
 	/* Current point the actor is moving to or standing at */
 	AActor* CurrentPatrolPoint;

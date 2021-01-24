@@ -63,7 +63,7 @@ void AFPSCharacter::Tick(float DeltaTime)
 		FRotator NewRot = CameraComponent->RelativeRotation;
 		//RemoteViewPitch is already replicated and allows for checking 
 		//	where the clients are looking
-		//RemoteViewPitch is compressed so we need to do the inverse
+		//RemoteViewPitch is compressed  to 1 byte, so we need to do the inverse calculation to uncompress it
 		NewRot.Pitch = RemoteViewPitch * 360.0f / 255.0f;
 
 		CameraComponent->SetRelativeRotation(NewRot);
@@ -137,7 +137,7 @@ void AFPSCharacter::MoveRight(float Value)
 	}
 }
 
-//Replicates carrying objective to all clients
+//Replicates carrying objective to all clients - So when variable changes all clients will recieve information
 void AFPSCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
