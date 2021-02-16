@@ -46,6 +46,7 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 
 	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);
 
+	//Gets the authoritative Game mode to set the game state as game over
 	AFPSGameMode* GM = Cast<AFPSGameMode>(GetWorld()->GetAuthGameMode());
 	if (GM)
 	{
@@ -113,6 +114,7 @@ void AFPSAIGuard::ResetOrientation()
 }
 
 //Sets guard state for clients 
+//This only get called on Clients
 void AFPSAIGuard::OnRep_GuardState()
 {
 	OnStateChanged(GuardState);
@@ -125,8 +127,8 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 	if (GuardState == NewState) { return; }
 
 	//Set state for server & client(s)
-	GuardState = NewState;
-	OnRep_GuardState();
+	GuardState = NewState; //The server will set this value since clients shouldn't
+	OnRep_GuardState();	//This function will then fire to set the guard state for all clients
 }
 
 
@@ -163,10 +165,13 @@ void AFPSAIGuard::Tick(float DeltaTime)
 }
 
 //This replicates to all clients - So when variable changes all clients will recieve information
+//We set the replication rule for GuardState in this function
 void AFPSAIGuard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	//We apply this rule where the variable will be replicated to all clients
+	//This in sync with "ReplicatedUsing" (found on tags in UPROPERTY for GuardState) to all the clients
 	DOREPLIFETIME(AFPSAIGuard, GuardState);
 }
 

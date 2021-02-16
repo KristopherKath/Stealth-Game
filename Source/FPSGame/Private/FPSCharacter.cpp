@@ -74,7 +74,7 @@ void AFPSCharacter::Tick(float DeltaTime)
 void AFPSCharacter::Fire()
 {
 	// try and fire a projectile
-	// this sends a request to the server to fire
+	// this sends a request to the server to fire as well so all players can see the bullet
 	ServerFire();
 	
 	// try and play the sound if specified
@@ -113,6 +113,7 @@ void AFPSCharacter::ServerFire_Implementation()
 	}
 }
 
+//Validates the clients request, but for now just return true
 bool AFPSCharacter::ServerFire_Validate()
 {
 	return true;
@@ -142,8 +143,9 @@ void AFPSCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	//This sets the replication rule for the value to be sent to all clients
 	DOREPLIFETIME(AFPSCharacter, bIsCarryingObjective);
 
-	//Useful for optimization
+	//Useful for optimization - Sets to only owner to have the value set
 	//DOREPLIFETIME_CONDITION(AFPSCharacter, bIsCarryingObjective, COND_OwnerOnly);
 }

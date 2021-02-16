@@ -53,10 +53,11 @@ protected:
 	void ResetOrientation();
 
 
-
+	//We made this replicated, but it will only be replicated in the specified function OnRep_GuardState
 	UPROPERTY(ReplicatedUsing=OnRep_GuardState)
 	EAIState GuardState;
 
+	//This function get called when state changes, but only on clients
 	UFUNCTION()
 	void OnRep_GuardState();
 

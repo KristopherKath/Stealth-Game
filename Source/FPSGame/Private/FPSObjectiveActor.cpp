@@ -49,13 +49,13 @@ void AFPSObjectiveActor::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	PlayEffects();
 
-	//Only server should check for destroy
+	//Only server should check for destroy and setting the player to carrying the objective
 	if (Role == ROLE_Authority)
 	{
 		AFPSCharacter* MyCharacter = Cast<AFPSCharacter>(OtherActor);
 		if (MyCharacter)
 		{
-			MyCharacter->bIsCarryingObjective = true;
+			MyCharacter->bIsCarryingObjective = true; //this is replicated so that all clients will get this value
 
 			Destroy();
 		}

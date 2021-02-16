@@ -30,8 +30,10 @@ AFPSProjectile::AFPSProjectile()
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
 
+	/*When the server creates an object tells the clients to also create that object when that object is flagged to replicate*/
+
 	//Lets projectile to be seen across all clients
-	//Server sends packets to clients
+	//Server sends packets to clients if replicate is set to true
 	SetReplicates(true); // Create copy on client and syncs server and clients
 	SetReplicateMovement(true); // Movement is updated
 }
@@ -39,7 +41,7 @@ AFPSProjectile::AFPSProjectile()
 
 void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
+	// Only add impulse and destroy projectile if we hit a physics simulating object
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());

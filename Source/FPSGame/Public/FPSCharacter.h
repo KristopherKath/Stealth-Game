@@ -52,7 +52,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	UAnimSequence* FireAnimation;
 
-	//Replicated allows for clients to carry objective
+	//Replicated makes this boolean change visible to all clients - We still need a replication rule for this
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
 	bool bIsCarryingObjective;
 
@@ -62,6 +62,8 @@ protected:
 	void Fire();
 
 	//Server Function, Reliable means it will reach server (at least eventually)
+	//Validation will validate client request to server and return true if good, if false then it will disconnect the client from the game
+	//The Server keyword creates headers for ServerFire_Implementation() and ServerFire_Validate()
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerFire();
 

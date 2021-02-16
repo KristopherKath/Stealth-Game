@@ -17,10 +17,11 @@ AFPSGameMode::AFPSGameMode()
 	// use our custom HUD class
 	HUDClass = AFPSHUD::StaticClass();
 
-	//Sets current gamemodes game state
+	//Sets current gamemodes game state so that when game ends it can set player information
 	GameStateClass = AFPSGameState::StaticClass();
 }
 
+//This will set the players to transition scene and fire GameState netmulticast to set their information for the game over sequence
 void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn) {
@@ -35,10 +36,12 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 			{
 				AActor* NewViewTarget = ReturnedActors[0];
 				
+				//Get all player controllers 
 				//For loop for setting the camera transition for game complete for all clients and server
 				for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
 				{
 					APlayerController* PC = It->Get();
+					//We dont check if this is a local controller because we want to be called on all players that the server controls
 					if (PC)
 					{
 						PC->SetViewTargetWithBlend(NewViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
@@ -56,8 +59,10 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 	AFPSGameState* GS = GetGameState<AFPSGameState>();
 	if (GS)
 	{
+		//Using the GameState class we use netmulticast to change the players end game message and disable their input
 		GS->MulticastOnMissionComplete(InstigatorPawn, bMissionSuccess);
 	}
 
+	//Send information to 
 	OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 }
